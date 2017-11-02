@@ -79,6 +79,7 @@ var config = {
                     $('#destination-input').val("");
                     $('#first-train').val("");
                     $('#freq-input').val(""); 
+                    $("#first-train").removeClass("error");
                 }else{ 
                     console.log("Time must be HH:mm"); 
                     $("#first-train").addClass("error");

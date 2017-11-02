@@ -2,6 +2,17 @@
 // Make sure to match the configuration to the script version number in the HTML
 // (Ex. 3.0 != 3.7.0)
 
+/*
+Store Train Sched
+    Get user input, submit button
+    Write to database
+    Listen to changes, write to table
+
+Calculate Arrival
+    calculate next arrival using first train and freq
+    calculate minutes away: next arrival - current time
+*/
+
 var config = {
     apiKey: "AIzaSyB7h26M68oOLccwtpunvSubikfT2S_TCSM",
     authDomain: "train-scheduler-1aae5.firebaseapp.com",
@@ -25,29 +36,9 @@ var config = {
     </tr>`);
 */
 
-    var employeeName = "";
-  var role = "";
-  var startDate = "";
-  var monthlyRate = 0;
 
  
-  $('#add-employee-btn').on("click", function(event){
-    event.preventDefault();
-    employeeName = $('#employee-name-input').val().trim();
-        $('#employee-name-input').val("");
-    role = $('#role-input').val().trim();
-        $('#role-input').val("");
-    startDate = Date.parse($('#start-input').val().trim()); 
-    console.log(startDate);
-        $('#start-input').val("");
-    monthlyRate = $('#rate-input').val().trim();
-        $('#rate-input').val("");
-    database.ref().push({
-        employeeName: employeeName,
-        employeeRole: role,
-        startDate: startDate,
-        monthlyRate: monthlyRate,
-    });
+ 
 
   /*  $("table tbody").append(`<tr>
     <td>${employeeName}</td>
@@ -57,30 +48,62 @@ var config = {
     <td>${monthlyRate}</td>
     <td>Total billed placeholder</td>
     </tr>`);*/
-    database.ref().on("child_added", function(snapshot, prevChildKey){
-        var newName = snapshot.val().employeeName;
-        var newRole = snapshot.val().employeeRole;
-        var newDate = snapshot.val().startDate;
-        var newRate = snapshot.val().monthlyRate;
-        console.log( snapshot.val().employeeName );
 
-        var convertedDate = moment(newDate);
-        var monthsWorked = moment(moment()).diff(convertedDate , "months");
-        console.log("months worked: " + monthsWorked);
-        var billed = monthsWorked * newRate;
+  var TrainSchedulerApp = {
+    
+    initialize: function(){
+        this.getInput();
+        this.updateTable();
+    },
+    getInput: function(){
+        $('#add-train-btn').on("click", function(event){ //Submit button click
+            event.preventDefault();
+            var trainName = $('#train-name-input').val().trim(); //local var to functino
+            $('#train-name-input').val("");
+            var destination = $('#destination-input').val().trim();
+            $('#destination-input').val("");
+            var firstTrain = $('#first-train').val().trim(); 
+            $('#first-train').val("");
+            var freq = $('#freq-input').val().trim();
+            $('#freq-input').val(""); //assign input to variables
+            database.ref().push({ //send variables to DB, push creates new keys
+                trainName: trainName,
+                destination: destination,
+                firstTrain: firstTrain,
+                freq: freq,
+            });
+        });
+    },
 
-        $("table tbody").append(`<tr>
-        <td>${newName}</td>
-        <td>${newRole}</td>
-        <td>${newDate}</td>
-        <td>${monthsWorked}</td>
-        <td>${newRate}</td>
-        <td>${billed}</td>
-        </tr>`);
-    });
+    updateTable: function(){
+        database.ref().on("child_added", function(snapshot, prevChildKey){
+            var newTrainName = snapshot.val().trainName;
+            var newDestination = snapshot.val().destination;
+            var newFirstTrain = snapshot.val().firstTrain;
+            var newFreq = snapshot.val().freq;
+    
+            $("table tbody").append(`<tr>
+            <td>${newTrainName}</td>
+            <td>${newDestination}</td>
+            <td>${newFreq}</td>
+            <td></td>
+            <td></td>
+            </tr>`);
+        });
+    },
 
-  });
+    minutesAway: function(firstTrain, freq){
+        var minutes;
 
+        var currentTime = moment();
+        var firstTrainMoment = moment(firstTrain);
+
+        return minutes;
+    },
+  };
+
+  /*Execution*/
+  TrainSchedulerApp.initialize();
 
 
  

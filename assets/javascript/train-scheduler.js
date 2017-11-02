@@ -60,21 +60,29 @@ var config = {
         $('#add-train-btn').on("click", function(event){ //Submit button click
             event.preventDefault();
             var trainName = $('#train-name-input').val().trim(); //local var to functino
-            $('#train-name-input').val("");
-            var destination = $('#destination-input').val().trim();
-            $('#destination-input').val("");
+            var destination = $('#destination-input').val().trim();         
             var firstTrain = $('#first-train').val().trim(); 
-            $('#first-train').val("");
-            var freq = $('#freq-input').val().trim();
-            $('#freq-input').val(""); //assign input to variables
+            var freq = $('#freq-input').val().trim(); //assign input to variables
+            
+            var re = new RegExp('(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){1}');
             
             if( trainName !== "" && destination !== "" && firstTrain !== "" && freq !== "" ){ //validate
-                database.ref().push({ //send variables to DB, push creates new keys
-                    trainName: trainName,
-                    destination: destination,
-                    firstTrain: firstTrain,
-                    freq: freq,
-                });
+                if( re.test(firstTrain) ){
+                    database.ref().push({ //send variables to DB, push creates new keys
+                        trainName: trainName,
+                        destination: destination,
+                        firstTrain: firstTrain,
+                        freq: freq,
+                    });
+
+                    $('#train-name-input').val("");
+                    $('#destination-input').val("");
+                    $('#first-train').val("");
+                    $('#freq-input').val(""); 
+                }else{ 
+                    console.log("Time must be HH:mm"); 
+                    $("#first-train").addClass("error");
+                }
             }else{ console.log("All Fields Required"); }
         });
     },
